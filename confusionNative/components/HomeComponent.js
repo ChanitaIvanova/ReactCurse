@@ -62,7 +62,7 @@ class Home extends Component {
 
         return(
             <ScrollView>
-            <RenderItem item={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
+              <RenderItem item={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
                   isLoading={this.props.dishes.isLoading}
                   erreMess={this.props.dishes.erreMess}
                   />
