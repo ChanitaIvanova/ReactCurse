@@ -4,8 +4,10 @@ import Main from './components/MainComponent';
 import * as Font from 'expo-font';
 import { Provider } from 'react-redux';
 import { ConfigureStore } from './redux/configureStore';
+import { PersistGate } from 'redux-persist/es/integration/react'
+import { Loading } from './components/LoadingComponent';
 
-const store = ConfigureStore();
+const { persistor, store } = ConfigureStore();
 
 export default class App extends React.Component {
   constructor(props) {
@@ -23,7 +25,11 @@ export default class App extends React.Component {
   render() {
     if (this.state.isFontLoaded) {
       return (<Provider store={store}>
-                <Main />
+                <PersistGate
+                  loading={<Loading />}
+                  persistor={persistor}>
+                  <Main />
+                </PersistGate>
               </Provider>);
     } else {
       return(<View/>);
