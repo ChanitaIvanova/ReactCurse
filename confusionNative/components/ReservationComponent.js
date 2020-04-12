@@ -5,6 +5,7 @@ import DatePicker from 'react-native-datepicker'
 import * as Animatable from 'react-native-animatable';
 import * as Permissions from 'expo-permissions';
 import { Notifications } from 'expo';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
   constructor(props) {
@@ -20,6 +21,27 @@ class Reservation extends Component {
   static navigationOptions = {
     title: 'Reserve Table',
   };
+    async obtainCalendarPermission() {
+        let permission = await Permissions.getAsync(Permissions.CALENDAR);
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission not granted to acess the calendar');
+            }
+        }
+        return permission;
+    }
+
+    async addReservationToCalendar() {
+        await this.obtainCalendarPermission();
+        Calendar.createEventAsync(Calendar.DEFAULT, {
+            title: 'Con Fusion Table Reservation',
+            startDate : new Date(Date.parse(this.state.date)),
+            endDate : new Date(Date.parse(this.state.date) + (2*60*60*1000)),
+            location :"121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong",
+            timeZone : "Asia/Hong_Kong"
+        });
+    }
 
     async obtainNotificationPermission() {
         let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
@@ -69,6 +91,7 @@ class Reservation extends Component {
 
   handleReservation() {
     console.log(JSON.stringify(this.state));
+    this.addReservationToCalendar();
     this.confirmReservation();
 
   }
