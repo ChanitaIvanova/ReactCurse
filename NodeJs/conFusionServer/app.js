@@ -40,13 +40,8 @@ app.use(session({
   store: new FileStore()
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/dishes',dishRouter);
-app.use('/promotions',promoRouter);
-app.use('/leaders',leaderRouter)
 
 function auth (req, res, next) {
     console.log(req.session);
@@ -69,6 +64,12 @@ function auth (req, res, next) {
 }
 
 app.use(auth);
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/dishes',dishRouter);
+app.use('/promotions',promoRouter);
+app.use('/leaders',leaderRouter)
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
