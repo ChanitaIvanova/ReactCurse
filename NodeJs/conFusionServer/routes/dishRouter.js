@@ -200,8 +200,6 @@ dishRouter.route('/:dishId/comments/:commentId')
             err.status = 404;
             return next(err);      
       }
-      console.log(comment.author.id);
-      console.log(req.user._id);
       if (comment.author.id !== req.user.id) {
            err = new Error('The user is not authorized to update this comment');
             err.status = 404;
