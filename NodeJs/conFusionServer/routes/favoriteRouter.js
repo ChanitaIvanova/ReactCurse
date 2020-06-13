@@ -24,7 +24,6 @@ favoriteRouter.route('/')
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Favorites.findOne({user: req.user._id})
-    .populate('dishes')
     .then((favorite) => {
         const dishes = req.body.map((dish) => {
             return dish._id;
@@ -38,7 +37,7 @@ favoriteRouter.route('/')
             if (req.body) {
               var newDishes = dishes.filter((newDishId) => {
                 return !favorite.dishes.find((existing) => {
-                  return existing.id === newDishId;
+                  return existing.equals(newDishId);
                 });
               });
               newDishes.forEach((dish) => {
@@ -89,7 +88,6 @@ favoriteRouter.route('/:dishId')
 })
 .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Favorites.findOne({user: req.user._id})
-    .populate('dishes')
     .then((favorite) => {
         if (!favorite) {
             return Favorites.create({
@@ -98,7 +96,7 @@ favoriteRouter.route('/:dishId')
             });
         }
         const alreadyExists = favorite.dishes.find((dish) => {
-            return dish.id === req.params.dishId;
+            return dish.equals(req.params.dishId);
         });
 
         if (!alreadyExists) {
@@ -124,7 +122,6 @@ favoriteRouter.route('/:dishId')
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Favorites.findOne({user: req.user._id})
-    .populate('dishes')
     .then((favorite) => {
         if (!favorite) {
             err = new Error('There are no favorites added for the user');
@@ -132,7 +129,7 @@ favoriteRouter.route('/:dishId')
             return next(err); 
         }
         const leftDishes = favorite.dishes.filter((dish) => {
-            return dish.id !== req.params.dishId;
+            return !dish.equals(req.params.dishId);
         });
 
         favorite.dishes = leftDishes;
